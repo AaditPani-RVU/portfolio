@@ -1,4 +1,4 @@
-// Centralized data — all content sourced from resume + brief
+// Centralized data — all content sourced from resume + GitHub (github.com/AaditPani-RVU)
 
 const PROFILE = {
   name: 'Aadit Pani',
@@ -10,11 +10,18 @@ const PROFILE = {
   linkedin: 'linkedin.com/in/aadit-pani-260078290',
   location: 'Bengaluru, IN',
   about: [
-    "I build production systems at the seam where ML meets security — voice-controlled local OSes, neuro-symbolic guardrails, edge intrusion detection.",
+    "I build production systems at the seam where ML meets security — and they interlock: a local voice OS, the neuro-symbolic guardrail engine that polices it, the fuzzer that attacks those guardrails, and a Rust inference engine that compiles policy into the decoder itself.",
     "My instinct is to design from the protocol up: what's the threat model, what fails when the network drops, how does it run on a Raspberry Pi without the cloud.",
     "Currently a CS (AI/ML) student at RV University and AI Engineering intern at HYRGPT, shipping a healthcare AI assistant with retrieval, structured outputs, and safety layers."
   ]
 };
+
+const HERO_STATS = [
+  { k: '2', v: 'Packages on PyPI' },
+  { k: '6', v: 'Systems in the stack' },
+  { k: 'IEEE', v: 'CAI 2026 accepted' },
+  { k: '0.48ms', v: 'Guard eval latency' }
+];
 
 const PROJECTS = [
   {
@@ -25,8 +32,9 @@ const PROJECTS = [
     year: '2026 — Present',
     status: 'ACTIVE',
     accent: 'cyan',
+    repo: 'https://github.com/AaditPani-RVU/N.O.R.A',
     problem: "Cloud-tethered voice assistants leak intent, fail offline, and can't be trusted with destructive system actions.",
-    solution: "A fully-local voice OS for Windows. Speech → policy guard → intent → command engine → speech, with screen vision and cognitive memory layered on top.",
+    solution: "A fully-local voice OS for Windows. Voice, text, WhatsApp, or UI in → policy guard → intent → command engine → speech out, with screen vision and cognitive memory layered on top. Sub-second loop, nothing leaves the machine.",
     pipeline: ['faster-whisper STT', 'NeuroSym input guard', 'LLM intent (Groq / Claude / Ollama)', 'Command engine', 'edge-TTS'],
     highlights: [
       { k: '40+', v: 'voice commands' },
@@ -36,7 +44,7 @@ const PROJECTS = [
     features: [
       { title: 'Screen Intelligence', body: 'Claude Vision (Haiku) describes screens, clicks UI by voice description, OCR-extracts, watches for events ("tell me when training finishes"), diagnoses stack traces.' },
       { title: 'Cognitive Memory v2', body: 'ChromaDB + sentence-transformers for semantic & episodic recall. Proactive engine predicts workflows from time-of-day patterns and bigram command sequences.' },
-      { title: 'Hardened Action Layer', body: 'NeuroSym v0.3 enforces destructive-action confirmation, path sandboxing, and step-count limits before any command executes — plus output secret-leakage and streaming abort rules.' }
+      { title: 'Hardened Action Layer', body: 'NeuroSym v0.5 enforces destructive-action confirmation, path sandboxing, and step-count limits before any command executes — plus output secret-leakage and streaming abort rules.' }
     ],
     stack: ['Python', 'faster-whisper', 'ChromaDB', 'Claude Vision', 'Ollama', 'NeuroSym-AI', 'edge-TTS']
   },
@@ -44,33 +52,87 @@ const PROJECTS = [
     id: 'neurosym',
     index: '02',
     name: 'NeuroSym-AI',
-    subtitle: 'Neuro-Symbolic Guardrails for LLMs · v0.3.0',
+    subtitle: 'Neuro-Symbolic Guardrails for LLMs · v0.5.0',
     year: 'Jul 2025 — Present',
-    status: 'SHIPPED · PyPI v0.3.0',
+    status: 'SHIPPED · PyPI v0.5.0',
     accent: 'violet',
+    repo: 'https://github.com/AaditPani-RVU/NeuroSym-AI',
+    pypi: 'https://pypi.org/project/neurosym-ai/',
+    install: 'pip install neurosym-ai',
     problem: "Guardrail libraries that depend on another LLM are slow, leaky, and recursive. They guard the prompt, never the output, the stream, or the action. Real safety needs deterministic, two-sided, auditable policy.",
-    solution: "Provider-agnostic neuro-symbolic engine guarding the full pipeline — voice transcription, LLM output, streaming chunks, and agent action plans — through a boolean policy algebra over regex, schema, predicates, and action-graph rules.",
-    pipeline: ['Input guard (voice / prompt)', 'Symbolic rule eval', 'Streaming chunk guard', 'Output guard (secrets / regurgitation)', 'Action-graph policy', 'Structured audit trace'],
+    solution: "Provider-agnostic neuro-symbolic engine guarding the full pipeline — voice transcription, LLM output, streaming chunks, and agent action plans. v0.5.0 makes it declarative: point Guard.from_yaml() at a config file and ship, with LangChain and LlamaIndex adapters that drop into existing pipelines.",
+    pipeline: ['Input guard (voice / prompt)', 'Symbolic + semantic rule eval', 'Streaming chunk guard', 'Output guard (secrets / PII redaction)', 'Action-graph policy', 'Structured audit trace'],
     highlights: [
       { k: '79.8%', v: 'block rate on 134-case benchmark' },
       { k: '0%', v: 'false positives' },
       { k: '0.48ms', v: 'avg eval latency' }
     ],
     features: [
-      { title: 'Two-Sided Guards', body: 'Input rules detect prompt injection across 9 attack presets. Output rules block AWS keys, JWTs, private keys, and verbatim system-prompt regurgitation. Streaming rules abort mid-token the moment a secret appears.' },
-      { title: 'Action-Graph Policy', body: 'destructive_needs_confirmation, max_steps, no_path_outside_sandbox, plus a boolean algebra (AllOf · AnyOf · Not · Implies) for composing Regex, Schema, and predicate rules with full audit traces.' },
-      { title: 'Production Posture', body: 'py.typed, Typer CLI, mypy strict, optional Z3 SMT linter, optional LLM repair loop. pip install neurosym-ai. MIT licensed.' }
+      { title: 'Two-Sided + Streaming Guards', body: 'Input rules detect prompt injection across 9 attack presets, with a semantic embedding fallback. Output rules block AWS keys, JWTs, private keys, and system-prompt regurgitation. Streaming rules abort mid-token the moment a secret appears.' },
+      { title: 'Config, Not Code — v0.5.0', body: 'Guard.from_yaml() loads a full guard stack from YAML — 13 built-in rule types plus custom registration. RedactionRule cleans PII instead of blocking the turn. Ships NeMo-migration docs and LangChain / LlamaIndex adapters.' },
+      { title: 'Session-Aware Defense', body: 'Multi-turn ConversationGuard catches attacks spread across turns. Zero-shot IntentClassifierRule flags harmful intent on CPU-only NLI — no API key. Action-graph policy composes rules with a boolean algebra (AllOf · AnyOf · Not · Implies), fully audit-traced.' }
     ],
-    stack: ['Python', 'Typer', 'JSON Schema', 'Z3 (optional)', 'Streaming API', 'mypy strict', 'PyPI']
+    stack: ['Python', 'YAML config', 'LangChain', 'LlamaIndex', 'Typer', 'Z3 (optional)', 'mypy strict', 'PyPI']
+  },
+  {
+    id: 'synapse',
+    index: '03',
+    name: 'Synapse',
+    subtitle: 'Policy-Fused Inference Engine in Rust',
+    year: '2026 — Present',
+    status: 'PHASE 0 · FOUNDATION',
+    accent: 'cyan',
+    repo: 'https://github.com/AaditPani-RVU/Synapse',
+    problem: "Generic engines (Ollama, llama.cpp) are blind to the agent they serve — they recompute identical system prompts every turn, retry malformed outputs, and know nothing about the safety layer sitting next to them.",
+    solution: "A Rust inference engine that fuses the agent and its guardrails into the decoder. NeuroSym policies compile into a decoding grammar that masks logits — out-of-policy output becomes structurally impossible to emit. Safer and faster at the same time, by design.",
+    pipeline: ['NeuroSym policy → decoding grammar', 'Grammar Gate (logit masking)', 'Prefix Vault (radix-tree KV reuse)', 'Echo Drafter (speculative decode)', 'Router (per-request model pick)'],
+    highlights: [
+      { k: 'Rust', v: 'zero-GC decoder hot path' },
+      { k: '0', v: 'retries — invalid output undecodable' },
+      { k: '2', v: 'systems it serves: NORA + NeuroSym' }
+    ],
+    features: [
+      { title: 'Grammar Gate', body: 'Compiles NeuroSym policies into a decoding grammar and masks logits so the model can only emit valid, in-policy output. Malformed or unsafe output is structurally impossible — zero retries.' },
+      { title: 'Prefix Vault', body: 'Radix-tree KV-cache reuse of the fixed system + guardrail preamble across turns. Stops recomputing the same 1–2k tokens on every single call — lower time-to-first-token.' },
+      { title: 'Echo Drafter', body: "Speculative decoding drafted from a suffix-automaton over NORA's own command history. Higher throughput on repetitive commands, provably lossless output." }
+    ],
+    stack: ['Rust', 'Logit masking', 'Radix-tree KV cache', 'Suffix automaton', 'Speculative decoding']
+  },
+  {
+    id: 'lethe',
+    index: '04',
+    name: 'Lethe',
+    subtitle: 'Policy-Algebra-Aware Fuzzer for LLM Guardrails',
+    year: '2026 — Present',
+    status: 'SHIPPED · PyPI',
+    accent: 'violet',
+    repo: 'https://github.com/AaditPani-RVU/lethe',
+    pypi: 'https://pypi.org/project/lethe-fuzz/',
+    install: 'pip install lethe-fuzz',
+    problem: "Garak red-teams LLMs. Nobody red-teams the guardrail sitting in front of the LLM — the classifiers, rule engines, and policy stacks that are supposed to hold the line.",
+    solution: "A fuzzer that attacks guardrail systems with mutations that know how guardrails think — homoglyphs, policy-algebra edge cases, streaming drip payloads — plus a genetic-algorithm loop that evolves bypasses. I built the guardrail; this is the tool I built to break it.",
+    pipeline: ['Seed corpus (JSONL)', 'String / policy / streaming mutators', 'Genetic-algorithm evolution', 'Adapter → target guardrail', 'Partial-bypass detection', 'Filterable HTML report'],
+    highlights: [
+      { k: '3', v: 'mutation families' },
+      { k: 'GA', v: 'evolved bypass search' },
+      { k: '46', v: 'tests · CI green' }
+    ],
+    features: [
+      { title: 'Guardrail-Shaped Mutations', body: 'Case flips, Cyrillic homoglyph substitution, and policy-algebra probes built to defeat regex rules and embedding classifiers — not just random noise.' },
+      { title: 'Streaming-Aware Probes', body: 'Late-resolve and drip payloads that stay benign chunk-by-chunk and only turn malicious once assembled — the blind spot of chunk-level stream guards.' },
+      { title: 'Any Target', body: 'Adapter protocol plugs into any guardrail: NeuroSym, LLM Guard, and Guardrails AI adapters ship in the box, with confidence-aware partial-bypass detection.' }
+    ],
+    stack: ['Python', 'Genetic algorithms', 'Unicode homoglyphs', 'Adapter protocol', 'HTML reports', 'Apache-2.0', 'PyPI']
   },
   {
     id: 'edgegensec',
-    index: '03',
+    index: '05',
     name: 'EdgeGenSec',
     subtitle: 'Lightweight Intrusion Detection on Raspberry Pi',
     year: 'Jul 2025 — Present',
     status: 'DEPLOYED',
     accent: 'cyan',
+    repo: 'https://github.com/AaditPani-RVU/EdgeGenSecIDS-Clean',
     problem: "Real-world IDS datasets are wildly imbalanced — Heartbleed, Infiltration, SQLi barely register. Edge devices can't run heavy CNN baselines.",
     solution: "GAN-synthesized rare attacks + few-shot Prototypical Networks, quantized to TorchScript for Pi 5. Adaptive retraining on uncertain traffic.",
     pipeline: ['CICIDS flow features (78D)', 'GAN attack synthesis', 'Prototypical Network classifier', 'TorchScript + INT8 quant', 'Adaptive retrain loop'],
@@ -88,7 +150,7 @@ const PROJECTS = [
   },
   {
     id: 'geofence',
-    index: '04',
+    index: '06',
     name: 'Geo-Fence Swarm',
     subtitle: 'Autonomous Perimeter Monitoring',
     year: 'Sep 2025 — Present',
@@ -111,21 +173,57 @@ const PROJECTS = [
   }
 ];
 
+// The four systems that interlock into one local-AI stack.
+// Edges are real dependencies: NORA imports neurosym-ai, Synapse compiles
+// NeuroSym policies into its decoder, Lethe ships a NeuroSym adapter.
+const STACK_MAP = {
+  nodes: [
+    { id: 'lethe',    name: 'LETHE',      role: 'ADVERSARY',  desc: 'fuzzes the guardrails',        accent: 'amber' },
+    { id: 'neurosym', name: 'NEUROSYM',   role: 'BRAIN',      desc: 'deterministic policy engine',  accent: 'violet' },
+    { id: 'synapse',  name: 'SYNAPSE',    role: 'REFLEX',     desc: 'policy-fused decoder',         accent: 'cyan' },
+    { id: 'nora',     name: 'NORA',       role: 'BODY',       desc: 'voice OS that acts',           accent: 'green' }
+  ]
+};
+
+const SIDE_PROJECTS = [
+  {
+    name: 'FR3AK',
+    desc: 'Conversation intelligence over multi-user chat transcripts: Plutchik 8-D emotion modeling per message, sarcasm and manipulation detection, per-participant risk profiling, and grounded LLM summaries on a FastAPI dashboard.',
+    tags: ['Python', 'FastAPI', 'PyTorch', 'Groq'],
+    repo: 'https://github.com/AaditPani-RVU/FR3AK',
+    accent: 'violet'
+  },
+  {
+    name: 'AI SDR Agent',
+    desc: 'Autonomous B2B outbound with no human in the loop: researches prospects via Tavily, writes 3-email PAS sequences tone-calibrated by seniority, sends through Gmail, classifies replies, and pings Slack when a meeting books. n8n drives day-3 / day-7 follow-ups.',
+    tags: ['FastAPI', 'Groq', 'Gmail API', 'n8n', 'Next.js'],
+    repo: 'https://github.com/AaditPani-RVU/ai-sdr-agent',
+    accent: 'cyan'
+  },
+  {
+    name: 'Job Hunter',
+    desc: 'Daily internship pipeline: pulls from 8+ job sources, hard-filters dealbreakers with zero AI cost, scores each role 0–100 with LLaMA-70B reasoning, and drafts 130-word cover letters grounded in my actual resume — delivered as an email + Telegram digest.',
+    tags: ['Python', 'Groq', 'RSS / APIs', 'Telegram'],
+    repo: 'https://github.com/AaditPani-RVU/job-hunter',
+    accent: 'cyan'
+  }
+];
+
 const SKILLS = [
   {
     cat: 'AI / ML',
     color: 'cyan',
-    items: ['Intrusion Detection', 'GANs', 'CNNs', 'Few-Shot Learning', 'Prototypical Networks', 'Quantization', 'TorchScript', 'Explainability']
+    items: ['Intrusion Detection', 'GANs', 'CNNs', 'Few-Shot Learning', 'Prototypical Networks', 'Quantization', 'TorchScript', 'RAG', 'Explainability']
   },
   {
     cat: 'Security',
     color: 'violet',
-    items: ['Threat Modeling', 'Symbolic Policy Rules', 'JSON Schema Validation', 'Regex Policies', 'Composite Policy Algebra', 'Repair Loops', 'Audit Traces', 'Z3']
+    items: ['Threat Modeling', 'Symbolic Policy Rules', 'Guardrail Fuzzing', 'JSON Schema Validation', 'Regex Policies', 'Composite Policy Algebra', 'Repair Loops', 'Audit Traces', 'Z3']
   },
   {
     cat: 'Systems',
     color: 'cyan',
-    items: ['Python', 'C / C++', 'JavaScript', 'Flask', 'SQLite3', 'Docker', 'Kubernetes', 'GitHub Actions']
+    items: ['Python', 'Rust', 'C / C++', 'JavaScript', 'FastAPI', 'Flask', 'SQLite3', 'Docker', 'Kubernetes', 'GitHub Actions']
   },
   {
     cat: 'Edge / IoT',
@@ -140,7 +238,7 @@ const SKILLS = [
   {
     cat: 'Tools',
     color: 'violet',
-    items: ['Git', 'VS Code', 'faster-whisper', 'Google Colab', 'Typer', 'mypy strict']
+    items: ['Git', 'VS Code', 'faster-whisper', 'LangChain', 'LlamaIndex', 'n8n', 'Typer', 'mypy strict']
   }
 ];
 
@@ -191,4 +289,4 @@ const NAV = [
   { id: 'contact',      label: 'SIGNAL',        n: '06' }
 ];
 
-Object.assign(window, { PROFILE, PROJECTS, SKILLS, EXPERIENCE, PUBLICATIONS, NAV });
+Object.assign(window, { PROFILE, HERO_STATS, PROJECTS, STACK_MAP, SIDE_PROJECTS, SKILLS, EXPERIENCE, PUBLICATIONS, NAV });

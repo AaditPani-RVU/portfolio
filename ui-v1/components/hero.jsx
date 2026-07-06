@@ -370,7 +370,12 @@ function Hero({ tweaks }) {
           borderTop: '1px solid var(--hairline)',
           borderBottom: '1px solid var(--hairline)'
         }}>
-          {HERO_STATS.map((s, i, arr) => (
+          {[
+            { k: '4', v: 'Active systems' },
+            { k: 'PyPI', v: 'Open-source release' },
+            { k: 'IEEE', v: 'CAI 2026 accepted' },
+            { k: '79.8%', v: 'Adversarial block rate' }
+          ].map((s, i, arr) => (
             <div key={i} style={{
               padding: '20px 18px',
               borderRight: i < arr.length - 1 ? '1px solid var(--hairline)' : 'none',

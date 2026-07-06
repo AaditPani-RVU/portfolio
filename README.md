@@ -22,3 +22,19 @@
 Personal portfolio showcasing my projects, experience, publications, and skills.
 
 **Live:** https://portfolio.aadi-pani.workers.dev
+
+---
+
+## Reverting to the old UI
+
+The previous UI (pre stack-map redesign, July 2026) is snapshotted in [`ui-v1/`](ui-v1/).
+It also stays viewable on the deployed site at `/ui-v1/`.
+
+To roll the whole site back to it:
+
+```bash
+cp ui-v1/index.html ui-v1/app.jsx ui-v1/tweaks-panel.jsx .
+cp ui-v1/components/*.jsx components/
+```
+
+Then redeploy (`npx wrangler deploy`).
